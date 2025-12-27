@@ -101,7 +101,7 @@ primary_hart_valid: .word 0x0
     li      t1, STACK_SIZE
 #if __CHERI_PURE_CAPABILITY__
     cspecialr   ct2, ddc
-    cfromptr    csp, ct2, t0
+    csetoffset  csp, ct2, t0
 #ifndef SINGLE_CORE
     mul     t3, t1, tp
 #endif
@@ -119,7 +119,7 @@ primary_hart_valid: .word 0x0
 
     LOAD_ADDR  t0, primary_hart_valid
     cspecialr   cs0, ddc
-    cfromptr    ct0, cs0, t0
+    csetoffset  ct0, cs0, t0
     li  t1, 1
 1:
 #ifdef __CHERI_PURE_CAPABILITY__
@@ -135,7 +135,7 @@ primary_hart_valid: .word 0x0
 #endif
     bnez  t2, 1b
     LOAD_ADDR    t0, primary_hart
-    cfromptr    ct0, cs0, t0
+    csetoffset    ct0, cs0, t0
 #ifdef __CHERI_PURE_CAPABILITY__
     csw   a0, 0(ct0)
 #else
@@ -144,7 +144,7 @@ primary_hart_valid: .word 0x0
 
     /* Clear bss */ 
     LOAD_ADDR t0, __bss_start
-    cfromptr  ct0, cs0, t0
+    csetoffset  ct0, cs0, t0
     LOAD_ADDR t1, __bss_end
 #if __CHERI_PURE_CAPABILITY__
     sub t2, t1, t0
@@ -185,7 +185,7 @@ primary_hart_ready: .word 0x0
 .popsection
 
     LOAD_ADDR   t0, primary_hart_ready
-    cfromptr    ct0, cs0, t0
+    csetoffset  ct0, cs0, t0
     li          t1, 1
 #if __CHERI_PURE_CAPABILITY__
     csw         t1, 0(ct0)
@@ -238,6 +238,7 @@ _fini:
 #endif
 
 .section ".rodata", "a"
+    .align 3
     .globl _heap_base_sym
     .type  _heap_base_sym, @object
     .size  _heap_base_sym, 8
